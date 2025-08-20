@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
   // Blog placeholder - replace with real blog logic or dynamic fetching as needed
 </script>
 
@@ -34,4 +34,4 @@ ul {
 li {
   margin-bottom: 1.5rem;
 }
-</style>
+</style> -->

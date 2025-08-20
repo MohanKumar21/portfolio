@@ -1,69 +1,42 @@
 <script lang="ts">
+  import Footer from "$lib/components/Footer.svelte";
+import "../app.css"
   import { onMount } from 'svelte';
-  let typedText = '';
-  const words = ['> npm run build', '> git commit -m "Hello World"', '> ./portfolio.sh'];
+  // particles.js does not ship ESM types; import via any
+  let particlesJS: any;
 
-  let i = 0, j = 0, current = words[0];
+  onMount(async () => {
+    // Dynamically import so SSR doesn't choke on `window`
+    // particles.js attaches to window; get the global
+    particlesJS = (window as any).particlesJS;
 
-  onMount(() => {
-    const interval = setInterval(() => {
-      if (j < current.length) {
-        typedText += current[j++];
-      } else {
-        setTimeout(() => {
-          j = 0;
-          typedText = '';
-          i = (i + 1) % words.length;
-          current = words[i];
-        }, 1200);
-      }
-    }, 100);
-    return () => clearInterval(interval);
+    // load config from /particles.json (served from /static)
+    particlesJS.load('particles-js', '/particles.json', () => {
+      console.log('particles.js config loaded');
+    });
   });
 </script>
 
-<style>
-  :global(body) {
-    margin: 0;
-    background: black;
-    color: #00ff00;
-    font-family: "Fira Code", monospace;
-  }
+<!-- full-screen background canvas target -->
+<div id="particles-js" aria-hidden="true"></div>
 
-  .matrix-bg {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: repeating-linear-gradient(
-      0deg,
-      rgba(0,255,0,0.05) 0px,
-      rgba(0,255,0,0.05) 2px,
-      transparent 2px,
-      transparent 4px
-    );
-    pointer-events: none;
-  }
+<header class="site-header">
+  <div class="brand">Mohan Kumar</div>
+  <nav class="nav">
+    <a href="/" data-sveltekit-preload-data="hover">About</a>
+    <a href="/resume.pdf" class="cta" data-sveltekit-preload-data="hover" target="_blank" rel="noopener">
+    Resume
+  </a>
+    <a href="/api/chat" data-sveltekit-preload-data="hover">Chat</a>
+    <a href="/contact" data-sveltekit-preload-data="hover" class="cta">Contact</a>
+  </nav>
+</header>
 
-  .terminal {
-    padding: 2rem;
-  }
-
-  .cursor {
-    display: inline-block;
-    width: 10px;
-    background: #00ff00;
-    animation: blink 1s infinite;
-  }
-
-  @keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0; }
-  }
-</style>
-
-<div class="matrix-bg"></div>
-
-<div class="terminal">
-  <h1>{typedText}<span class="cursor"></span></h1>
+<main class="page-wrap">
   <slot />
-</div>
+</main>
+<Footer></Footer>
+<!-- <footer class="site-footer">
+  <span>© {new Date().getFullYear()} Mohan Kumar</span>
+  <a href="https://github.com/VincentGarreau/particles.js" target="_blank" rel="noreferrer">particles.js</a>
+</footer> -->
