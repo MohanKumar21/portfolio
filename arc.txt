@@ -1,0 +1,5 @@
+Database connections, 
+Add contact details 
+Redis for rate limiting 
+integrating front end and backend 
+RAG for the CV 

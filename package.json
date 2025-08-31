@@ -43,5 +43,9 @@
 	},
 	"keywords": [
 		"svelte"
-	]
+	],
+	"dependencies": {
+		"particles.js": "^2.0.0",
+		"process": "^0.11.10"
+	}
 }
