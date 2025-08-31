@@ -1,9 +1,12 @@
 <script lang="ts">
+  import { global_links } from "$lib/stores/global.js";
   import { onMount } from "svelte";
 
   let name = "";
   let email = "";
   let message = "";
+  let reason = "General"; // default reason
+  let other_reason = "";
   let busy = false;
   let success: string | null = null;
   let error: string | null = null;
@@ -14,18 +17,27 @@
     success = null;
     error = null;
 
+    const final_reason = reason === "Other" ? other_reason : reason;
+
     try {
-      // Example: POST to your FastAPI or backend endpoint
-      const res = await fetch("/api/contact", {
+      const res = await fetch("contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, message })
+        body: JSON.stringify({
+          name,
+          email,
+          message,
+          reason: final_reason,
+        }),
       });
 
-      if (!res.ok) throw new Error("Failed to send");
+      const data = await res.json();
 
-      success = "Message sent successfully ✅";
-      name = email = message = "";
+      if (!data.success) throw new Error("DB insert failed");
+
+      success = "Message saved successfully ✅";
+      name = email = message = reason = other_reason = "";
+      reason = "General"; // reset dropdown
     } catch (err) {
       error = "Something went wrong ❌";
       console.error(err);
@@ -47,6 +59,23 @@
     Email
     <input type="email" bind:value={email} required />
   </label>
+
+  <label>
+    Reason
+    <select bind:value={reason} required>
+      <option value="General">General</option>
+      <option value="Collaboration">Collaboration</option>
+      <option value="Job Opportunity">Job Opportunity</option>
+      <option value="Other">Other</option>
+    </select>
+  </label>
+
+  {#if reason === "Other"}
+    <label>
+      Please specify
+      <input type="text" bind:value={other_reason} required />
+    </label>
+  {/if}
 
   <label>
     Message
@@ -72,6 +101,13 @@
   {#if error}<p class="error">{error}</p>{/if}
 </form>
 
+<!-- Contact Links -->
+<div class="contact-links">
+  <a href={$global_links.linkedin} target="_blank">LinkedIn</a>
+  <a href={$global_links.github} target="_blank">GitHub</a>
+  <a href={"mailto:" + $global_links.email}>Email</a>
+</div>
+
 <style>
   .contact-form {
     max-width: 500px;
@@ -82,10 +118,10 @@
     padding: 2rem;
     background: #1a1a1a;
     border-radius: 1rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,.3);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   }
   h2 {
-    margin-bottom: .5rem;
+    margin-bottom: 0.5rem;
     text-align: center;
     color: #fff;
   }
@@ -95,14 +131,18 @@
     font-size: 0.9rem;
     color: #ddd;
   }
-  input, textarea {
+  input,
+  textarea,
+  select {
     padding: 0.6rem;
     border-radius: 0.5rem;
     border: 1px solid #333;
     background: #222;
     color: #fff;
   }
-  input:focus, textarea:focus {
+  input:focus,
+  textarea:focus,
+  select:focus {
     outline: none;
     border-color: #7aa2ff;
   }
@@ -130,6 +170,29 @@
     opacity: 0;
     pointer-events: none;
   }
-  .success { color: #4caf50; text-align: center; }
-  .error { color: #f44336; text-align: center; }
+  .success {
+    color: #4caf50;
+    text-align: center;
+  }
+  .error {
+    color: #f44336;
+    text-align: center;
+  }
+
+  .contact-links {
+    margin-top: 2rem;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+  .contact-links a {
+    color: #7aa2ff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+  .contact-links a:hover {
+    color: #b388ff;
+  }
 </style>

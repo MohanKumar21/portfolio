@@ -1,140 +1,259 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { writable } from "svelte/store";
+  import { onMount, createEventDispatcher } from "svelte";
+  // SuggestionQuestions is not used here anymore; left import for possible extensions
+  // import SuggestionQuestions from "./SuggestionQuestions.svelte";
 
-  type Message = {
-    role: "user" | "assistant";
-    content: string;
-  };
+  export let suggestions: string[] = [];
+  export let transparent: boolean = true;
 
-  const messages = writable<Message[]>([
-    { role: "assistant", content: "Hello! How can I help you?" }
-  ]);
+  const dispatch = createEventDispatcher();
+
   let input = "";
   let loading = false;
+  let messages: { role: "user" | "assistant"; content: string }[] = [
+    { role: "assistant", content: "Hi! Ask me something about my CV." },
+  ];
 
-  async function sendMessage() {
-    if (!input.trim()) return;
-    messages.update(msgs => [
-      ...msgs,
-      { role: "user", content: input.trim() }
-    ]);
-    const userInput = input.trim();
+  async function send(userInput?: string) {
+    if (loading) return;
+    const text = typeof userInput === "string" ? userInput : input.trim();
+    if (!text) return;
     input = "";
+    messages = [
+      ...messages,
+      { role: "user", content: text },
+      { role: "assistant", content: "" },
+    ];
     loading = true;
 
-    // Call backend API (to be implemented!)
-    try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userInput })
-      });
-      if (!response.ok) throw new Error('API error');
-      const data = await response.json();
-      messages.update(msgs => [
-        ...msgs,
-        { role: "assistant", content: data.completion || 'No response.' }
-      ]);
-    } catch (err) {
-      messages.update(msgs => [
-        ...msgs,
-        { role: "assistant", content: "Sorry, something went wrong with the chat API." }
-      ]);
+    const resp = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        thread_id: "portfolio",
+        stream: true,
+        messages: [{ role: "user", content: text }],
+      }),
+    });
+
+    if (!resp.ok || !resp.body) {
+      loading = false;
+      messages = [
+        ...messages.slice(0, -1),
+        { role: "assistant", content: "Error from server" },
+      ];
+      return;
     }
+
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let assistantText = "";
+    const patchAssistant = () => {
+      messages = [
+        ...messages.slice(0, -1),
+        { role: "assistant", content: assistantText },
+      ];
+    };
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value, { stream: true });
+
+      for (const line of chunk.split("\n")) {
+        const trimmed = line.trim();
+        if (!trimmed.startsWith("data:")) continue;
+        const data = trimmed.slice(5).trim();
+        if (data === "[DONE]") continue;
+
+        try {
+          const json = JSON.parse(data);
+          const delta = json?.choices?.[0]?.delta;
+          if (delta?.content) {
+            assistantText += delta.content;
+            patchAssistant();
+          }
+        } catch {}
+      }
+    }
+
     loading = false;
   }
+
+  // Allow parent to trigger a suggestion (imperatively)
+  export function sendSuggestion(suggestion: string) {
+    send(suggestion);
+  }
+
+  // For accessibility, focus input on mount
+  let inputRef: HTMLInputElement | null = null;
+  onMount(() => {
+    inputRef?.focus();
+  });
 </script>
 
-<section class="panel chat-panel">
-  <h2>Chat</h2>
+<div class="chat-root {transparent ? 'transparent' : ''}">
   <div class="chat-history">
-    {#each $messages as msg, i}
-      <div class="message {msg.role}">
-        <span class="role">{msg.role === "user" ? "You" : "Assistant"}:</span>
-        <span class="content">{msg.content}</span>
+    {#each messages as m}
+      <div class="bubble {m.role}">
+        <span class="role">{m.role === "user" ? "You" : "Assistant"}:</span>
+        <span class="msg-content">{m.content}</span>
       </div>
     {/each}
     {#if loading}
-      <div class="message assistant typing">
+      <div class="bubble assistant typing">
         <span class="role">Assistant:</span>
-        <span class="content">...</span>
+        <span class="msg-content">...</span>
       </div>
     {/if}
   </div>
-  <form class="chat-input" on:submit|preventDefault={sendMessage}>
+  <form class="chat-inputbar" on:submit|preventDefault={() => send()}>
     <input
-      type="text"
+      bind:this={inputRef}
+      class="input"
       bind:value={input}
       autocomplete="off"
-      placeholder="Type a message..."
-      required
+      placeholder="Ask about my CV…"
       disabled={loading}
     />
-    <button type="submit" disabled={loading || !input.trim()}>Send</button>
+    <button type="submit" class="send-btn" disabled={loading || !input.trim()}>
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M4 10L16 4L12 16L10 12L4 10Z" fill="currentColor" />
+      </svg>
+      <span class="sr-only">Send</span>
+    </button>
   </form>
-</section>
+</div>
 
 <style>
-.panel {
-  padding: 2rem;
-  background: var(--chat-bg, #fff4fa);
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-h2 {
-  margin-top: 0;
-}
-.chat-history {
-  background: #fffefd;
-  border-radius: 8px;
-  padding: 1rem;
-  height: 220px;
-  overflow-y: auto;
-  margin-bottom: 1rem;
-  border: 1px solid #eee4ea;
-  font-size: 0.97em;
-}
-.message {
-  margin-bottom: 0.7em;
-  display: flex;
-  gap: 0.5em;
-}
-.message.user .role {
-  color: #467fcf;
-  font-weight: bold;
-}
-.message.assistant .role {
-  color: #d953a6;
-  font-weight: bold;
-}
-.message.typing .content {
-  font-style: italic;
-  color: #bbb;
-}
-.chat-input {
-  display: flex;
-  gap: 0.5em;
-}
-input[type="text"] {
-  flex: 1;
-  padding: 0.7em;
-  border-radius: 6px;
-  border: 1px solid #d6bcd6;
-  font-size: 1em;
-}
-button[type="submit"] {
-  padding: 0.7em 1.2em;
-  border: none;
-  border-radius: 6px;
-  background: #d953a6;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.1s;
-}
-button[type="submit"]:disabled {
-  background: #e9bfdd;
-  cursor: wait;
-}
+  .chat-root {
+    width: 80vw;
+    height: 80vh;
+    max-width: 100vw;
+    max-height: 100vh;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    min-height: 100vh;
+    color: #fff;
+    font-weight: bold;
+  }
+
+  .chat-history {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    overflow-y: auto;
+    margin-bottom: 0.7rem;
+    min-height: 220px;
+    max-height: 309px;
+    padding: 0.95em 0.4em 0.75em 0.4em;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 16px;
+    box-shadow: 0 1.5px 7px rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(3px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .bubble {
+    border-radius: 12px;
+    padding: 0.7em 1.17em;
+    background: rgba(255, 255, 255, 0.08);
+    display: flex;
+    gap: 0.6em;
+    align-items: flex-start;
+    color: #fff;
+    font-size: 1.06em;
+    border: 1.7px solid rgba(255, 255, 255, 0.15);
+    font-weight: bold;
+  }
+
+  .bubble.user {
+    align-self: flex-end; /* push user messages to the right */
+    background: rgba(0, 200, 255, 0.18);
+    border: 2px solid rgba(0, 255, 255, 0.4);
+    filter: drop-shadow(0 2px 6px rgba(0, 255, 255, 0.6));
+    text-align: right; /* align text inside to right */
+  }
+
+  .bubble.assistant {
+    align-self: flex-start; /* assistant stays left */
+    background: rgba(255, 0, 180, 0.18);
+    border: 2px solid rgba(255, 0, 200, 0.4);
+    filter: drop-shadow(0 2px 7px rgba(255, 0, 200, 0.6));
+    text-align: left; /* keep assistant text left */
+  }
+
+  .bubble.typing .msg-content {
+    color: #bbb;
+    font-style: italic;
+  }
+
+  .role {
+    font-weight: bold;
+    margin-right: 0.17em;
+    color: #fff;
+  }
+
+  .msg-content {
+    white-space: pre-wrap;
+    word-break: break-word;
+    flex: 1 1 auto;
+    color: #fff;
+    font-weight: bold;
+  }
+
+  .chat-inputbar {
+    display: flex;
+    gap: 0.6em;
+    margin-top: 0.7em;
+    align-items: stretch;
+  }
+
+  .input {
+    flex: 1 1 auto;
+    border-radius: 7px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-size: 1.08em;
+    padding: 0.7em 1.1em;
+    outline: none;
+    font-weight: bold;
+  }
+  .input:focus {
+    border: 1.3px solid #7ed0fc;
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  .send-btn {
+    border: none;
+    border-radius: 6px;
+    background: linear-gradient(110deg, #c682fc 40%, #7ed0fc 100%);
+    color: #fff;
+    font-size: 1.04em;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0 0.95em;
+  }
+  .send-btn:disabled {
+    background: #444;
+    color: #aaa;
+    cursor: not-allowed;
+  }
+
+  .sr-only {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(1px, 1px, 1px, 1px);
+  }
 </style>

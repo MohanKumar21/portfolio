@@ -1,6 +1,20 @@
 /* CSS Reset — minimal */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body, #svelte { height: 100%; }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#svelte {
+  height: 100%;
+}
+
 body {
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   color: #e8eef8;
@@ -16,7 +30,8 @@ body {
   inset: 0;
   width: 100%;
   height: 100%;
-  z-index: 0; /* stay behind UI */
+  z-index: 0;
+  /* stay behind UI */
 }
 
 /* Layer content above particles */
@@ -35,7 +50,7 @@ body {
   padding: 0 20px;
   backdrop-filter: blur(4px);
   background: rgba(9, 10, 15, 0.35);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .brand {
@@ -59,9 +74,9 @@ body {
 
 .nav a:hover {
   color: #ffffff;
-  background: rgba(255,255,255,0.06);
+  background: rgba(255, 255, 255, 0.06);
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
 
 .nav a.cta {
@@ -87,10 +102,10 @@ body {
   max-width: 900px;
   width: min(900px, 92vw);
   background: rgba(13, 17, 23, 0.6);
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 16px;
   padding: clamp(18px, 2.8vw, 28px);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
 }
 
 /* Footer */
@@ -101,15 +116,41 @@ body {
   justify-content: center;
   gap: 12px;
   color: #9fb1cc;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
   background: rgba(9, 10, 15, 0.35);
 }
-.site-footer a { color: #bcd0ee; }
-.site-footer a:hover { color: white; }
+
+.site-footer a {
+  color: #bcd0ee;
+}
+
+.site-footer a:hover {
+  color: white;
+}
 
 /* Utility */
-h1, h2, h3 { line-height: 1.2; }
-h1 { font-size: clamp(28px, 4vw, 44px); letter-spacing: .2px; }
-h2 { font-size: clamp(22px, 3vw, 28px); opacity: .9; }
-p  { opacity: .92; }
-hr { border: none; border-top: 1px solid rgba(255,255,255,.08); margin: 18px 0; }
+h1,
+h2,
+h3 {
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: clamp(28px, 4vw, 44px);
+  letter-spacing: .2px;
+}
+
+h2 {
+  font-size: clamp(22px, 3vw, 28px);
+  opacity: .9;
+}
+
+p {
+  opacity: .92;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, .08);
+  margin: 18px 0;
+}
