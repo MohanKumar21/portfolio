@@ -8,11 +8,6 @@
     "Show me highlights from your resume.",
     "List your strongest skills.",
     "What are your recent achievements?",
-    "How do you keep learning?",
-    "Show AI skills",
-    "What tech do you love?",
-    "Recent certifications?",
-    "Share a fun fact",
   ];
 
   let chatPanelRef: typeof ChatPanel | null = null;
@@ -23,19 +18,13 @@
 </script>
 
 <div class="api-chat-page">
-  <ChatPanel bind:this={chatPanelRef} transparent={true} />
-  <div class="suggestions-vertical-panel">
-    <SuggestionQuestions
-      {suggestions}
-      disabled={false}
-      on:pick={handleSuggestionPick}
-    />
-  </div>
+  <h1 class="chat-title">🤖 Mohan’s Resume Assistant</h1>
+  <ChatPanel bind:this={chatPanelRef} transparent={true} {suggestions} />
 </div>
 
 <style>
   .api-chat-page {
-    min-height: 93vh;
+    min-height: 100vh;
     width: 100vw;
     display: flex;
     flex-direction: column;
@@ -44,6 +33,12 @@
     background: none;
     z-index: 1;
     position: relative;
+  }
+  .api-chat-page > :global(.chat-panel) {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
   }
   .suggestions-vertical-panel {
     width: 100vw;
@@ -60,8 +55,8 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    overflow-y: auto;
-    max-height: 38vh;
+    /* overflow-y: auto; */
+    max-height: 30vh;
     min-height: 64px;
     scrollbar-width: thin;
     scrollbar-color: #d078fe #222;
