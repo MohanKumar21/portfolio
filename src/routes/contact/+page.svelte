@@ -110,7 +110,7 @@
 
 <style>
   .contact-form {
-    max-width: 500px;
+    max-width: 800px;
     margin: auto;
     display: flex;
     flex-direction: column;

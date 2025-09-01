@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";
-  // SuggestionQuestions is not used here anymore; left import for possible extensions
-  // import SuggestionQuestions from "./SuggestionQuestions.svelte";
+  import SuggestionQuestions from "./SuggestionQuestions.svelte";
+  import { fade } from "svelte/transition";
 
   export let suggestions: string[] = [];
   export let transparent: boolean = true;
@@ -9,6 +9,7 @@
   const dispatch = createEventDispatcher();
 
   let input = "";
+  let showSuggestions = suggestions.length > 0;
   let loading = false;
   let messages: { role: "user" | "assistant"; content: string }[] = [
     { role: "assistant", content: "Hi! Ask me something about my CV." },
@@ -25,6 +26,9 @@
       { role: "assistant", content: "" },
     ];
     loading = true;
+
+    // Hide suggestions after sending (fade handled in DOM)
+    showSuggestions = false;
 
     const resp = await fetch("/api/chat", {
       method: "POST",
@@ -85,6 +89,10 @@
     send(suggestion);
   }
 
+  function handleSuggestionPick(e: CustomEvent<{ suggestion: string }>) {
+    send(e.detail.suggestion);
+  }
+
   // For accessibility, focus input on mount
   let inputRef: HTMLInputElement | null = null;
   onMount(() => {
@@ -94,16 +102,29 @@
 
 <div class="chat-root {transparent ? 'transparent' : ''}">
   <div class="chat-history">
-    {#each messages as m}
-      <div class="bubble {m.role}">
-        <span class="role">{m.role === "user" ? "You" : "Assistant"}:</span>
-        <span class="msg-content">{m.content}</span>
-      </div>
+    {#each messages as m, i}
+      {#if i < messages.length - 1}
+        <div class="bubble {m.role}">
+          {#if m.content !== ""}
+            <span class="msg-content">{m.content}</span>
+          {/if}
+        </div>
+      {/if}
     {/each}
+
     {#if loading}
       <div class="bubble assistant typing">
-        <span class="role">Assistant:</span>
-        <span class="msg-content">...</span>
+        <span class="msg-content typing-indicator">
+          <span></span><span></span><span></span>
+        </span>
+      </div>
+    {:else if messages.length > 0}
+      <div class="bubble {messages[messages.length - 1].role}">
+        {#if messages[messages.length - 1].content !== ""}
+          <span class="msg-content">
+            {messages[messages.length - 1].content}
+          </span>
+        {/if}
       </div>
     {/if}
   </div>
@@ -123,42 +144,18 @@
       <span class="sr-only">Send</span>
     </button>
   </form>
+  {#if showSuggestions && suggestions.length}
+    <div style="margin-top: 0.3em;" transition:fade>
+      <SuggestionQuestions
+        {suggestions}
+        disabled={loading}
+        on:pick={handleSuggestionPick}
+      />
+    </div>
+  {/if}
 </div>
 
 <style>
-  .chat-root {
-    width: 80vw;
-    height: 80vh;
-    max-width: 100vw;
-    max-height: 100vh;
-    margin: 0;
-    padding: 0;
-    border-radius: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    min-height: 100vh;
-    color: #fff;
-    font-weight: bold;
-  }
-
-  .chat-history {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5em;
-    overflow-y: auto;
-    margin-bottom: 0.7rem;
-    min-height: 220px;
-    max-height: 309px;
-    padding: 0.95em 0.4em 0.75em 0.4em;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 16px;
-    box-shadow: 0 1.5px 7px rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(3px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
   .bubble {
     border-radius: 12px;
     padding: 0.7em 1.17em;
@@ -255,5 +252,75 @@
     height: 1px;
     overflow: hidden;
     clip: rect(1px, 1px, 1px, 1px);
+  }
+  .chat-root {
+    width: 80vw;
+    height: 90vh;
+    max-width: 100vw;
+    max-height: 100vh;
+    margin: 0;
+    padding: 1rem;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    color: #fff;
+    font-weight: bold;
+    /* background: #0a0a0a;  */
+  }
+
+  /* Chat history fills available space */
+  .chat-history {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    overflow-y: auto;
+    margin-bottom: 0.7rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: 16px;
+    box-shadow: 0 1.5px 7px rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  /* Typing dots animation */
+  .typing-indicator {
+    display: inline-flex;
+    gap: 0.3em;
+    align-items: center;
+  }
+
+  .typing-indicator span {
+    width: 0.5em;
+    height: 0.5em;
+    background: #fff;
+    border-radius: 50%;
+    display: inline-block;
+    animation: blink 1.4s infinite both;
+  }
+
+  .typing-indicator span:nth-child(1) {
+    animation-delay: 0s;
+  }
+  .typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  .typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  @keyframes blink {
+    0%,
+    80%,
+    100% {
+      transform: scale(0.6);
+      opacity: 0.4;
+    }
+    40% {
+      transform: scale(1);
+      opacity: 1;
+    }
   }
 </style>

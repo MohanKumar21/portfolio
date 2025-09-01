@@ -24,6 +24,9 @@
   <div class="brand">Mohan Kumar</div>
   <nav class="nav">
     <a href="/" data-sveltekit-preload-data="hover">About</a>
+
+    <a href="/api/chat" data-sveltekit-preload-data="hover">Chat</a>
+    <a href="/contact" data-sveltekit-preload-data="hover">Contact</a>
     <a
       href="/resume.pdf"
       class="cta"
@@ -33,10 +36,6 @@
     >
       Resume
     </a>
-    <a href="/api/chat" data-sveltekit-preload-data="hover">Chat</a>
-    <a href="/contact" data-sveltekit-preload-data="hover" class="cta"
-      >Contact</a
-    >
   </nav>
 </header>
 
