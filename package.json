@@ -54,6 +54,7 @@
 		"dompurify": "^3.2.6",
 		"highlight.js": "^11.11.1",
 		"markdown-it": "^14.1.0",
+		"marked": "^16.2.1",
 		"particles.js": "^2.0.0",
 		"process": "^0.11.10",
 		"supabase": "^2.39.2"

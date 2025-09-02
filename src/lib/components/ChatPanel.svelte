@@ -2,6 +2,7 @@
   import { onMount, createEventDispatcher } from "svelte";
   import SuggestionQuestions from "./SuggestionQuestions.svelte";
   import { fade } from "svelte/transition";
+  import { marked } from "marked";
 
   export let suggestions: string[] = [];
   export let transparent: boolean = true;
@@ -28,7 +29,7 @@
     loading = true;
 
     // Hide suggestions after sending (fade handled in DOM)
-    showSuggestions = false;
+    // showSuggestions = false;
 
     const resp = await fetch("/api/chat", {
       method: "POST",
@@ -106,7 +107,7 @@
       {#if i < messages.length - 1}
         <div class="bubble {m.role}">
           {#if m.content !== ""}
-            <span class="msg-content">{m.content}</span>
+            <span class="msg-content">{@html marked(m.content)}</span>
           {/if}
         </div>
       {/if}
@@ -122,7 +123,7 @@
       <div class="bubble {messages[messages.length - 1].role}">
         {#if messages[messages.length - 1].content !== ""}
           <span class="msg-content">
-            {messages[messages.length - 1].content}
+            {@html marked(messages[messages.length - 1].content)}
           </span>
         {/if}
       </div>
