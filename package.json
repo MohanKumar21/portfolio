@@ -51,7 +51,6 @@
 	"dependencies": {
 		"@ai-sdk/svelte": "^3.0.28",
 		"@supabase/supabase-js": "^2.56.1",
-		"@tailwindcss/oxide": "^4.1.12",
 		"@tailwindcss/vite": "^4.1.12",
 		"daisyui": "^5.1.0",
 		"date-fns": "^4.1.0",
