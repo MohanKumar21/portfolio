@@ -1,6 +1,5 @@
 <script lang="ts">
   import Footer from "$lib/components/Footer.svelte";
-  import tailwindcss from "@tailwindcss/vite";
   import "../app.css";
   import { onMount } from "svelte";
   // particles.js does not ship ESM types; import via any
