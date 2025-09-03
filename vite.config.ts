@@ -8,5 +8,11 @@ export default defineConfig({
 		// proxy: {
 		// 	'/api/chat': 'http://localhost:3001'
 		// }
+	},
+	optimizeDeps: {
+		exclude: ['@tailwindcss/oxide', 'lightningcss']
+	},
+	ssr: {
+		noExternal: ['@tailwindcss/oxide', 'lightningcss']
 	}
 });
