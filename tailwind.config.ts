@@ -10,4 +10,8 @@ module.exports = {
     daisyui: {
         themes: ["dark", "cupcake"], // you can pick themes, default is light+dark
     },
+    future: {
+        oxidePlugin: false // disable @tailwindcss/oxide
+    }
 }
+
