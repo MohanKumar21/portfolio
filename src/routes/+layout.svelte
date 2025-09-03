@@ -1,5 +1,6 @@
 <script lang="ts">
   import Footer from "$lib/components/Footer.svelte";
+  import tailwindcss from "@tailwindcss/vite";
   import "../app.css";
   import { onMount } from "svelte";
   // particles.js does not ship ESM types; import via any
@@ -21,9 +22,9 @@
 <div id="particles-js" aria-hidden="true"></div>
 
 <header class="site-header">
-  <div class="brand">Mohan Kumar</div>
+  <a href="/" class="brand" data-sveltekit-preload-data="hover">Mohan Kumar</a>
   <nav class="nav">
-    <a href="/" data-sveltekit-preload-data="hover">About</a>
+    <a href="/about" data-sveltekit-preload-data="hover">About</a>
 
     <a href="/api/chat" data-sveltekit-preload-data="hover">Chat</a>
     <a href="/contact" data-sveltekit-preload-data="hover">Contact</a>

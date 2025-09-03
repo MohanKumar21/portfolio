@@ -29,7 +29,7 @@
     loading = true;
 
     // Hide suggestions after sending (fade handled in DOM)
-    // showSuggestions = false;
+    showSuggestions = false;
 
     const resp = await fetch("/api/chat", {
       method: "POST",

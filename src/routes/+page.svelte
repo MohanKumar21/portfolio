@@ -1,10 +1,10 @@
-<section class="prose text-center space-y-4">
+<section class="prose text-center space-y-5">
   <!-- Profile Picture -->
   <div
     style="display: flex; justify-content: center; align-items: center; margin: 1rem 0;"
   >
     <img
-      src="/mohan21.jpeg"
+      src="/mohan_dp.png"
       alt="Mohan Kumar"
       style="
       width: 250px;
@@ -16,27 +16,21 @@
     "
     />
   </div>
-
-  <!-- Title -->
-  <h1 class="text-3xl font-bold">Mohan Kumar</h1>
-  <p class="text-lg text-gray-600">Software Engineer</p>
-
-  <!-- 3-line description -->
-  <p>I’m a passionate developer who loves building things.</p>
-  <p>
-    I experiment with <strong>LLMs</strong>, <strong>RAG pipelines</strong>, and
-    AI infrastructure.
-  </p>
-  <p>
-    Always curious about how things work — from frontend polish to backend
-    scale.
-  </p>
-
-  <!-- Quote -->
-  <blockquote class="italic text-gray-500 border-l-4 border-gray-400 pl-4">
-    “Code is like humor. When you have to explain it, it’s bad.”
-  </blockquote>
+  <div class="space-y-5 text-center">
+    <h1 class="text-5xl font-extrabold tracking-tight font-serif">
+      K S Mohan Kumar
+    </h1>
+    <h2 class="text-3xl font-medium font-serif">Software Engineer · Oracle</h2>
+    <h3 class="text-xl mx-auto leading-loose font-serif">
+      Interdisciplinary Dual Degree (B.Tech Mechanical · M.Tech Data Science),
+      <span class="whitespace-nowrap">IIT Madras</span>
+    </h3>
+    <blockquote class="italic text-lg mx-auto text-center">
+      “Code is like humor. When you have to explain it, it’s bad.”
+    </blockquote>
+  </div>
 </section>
+
 <div class="mt-10 flex justify-center">
   <button
     on:click={() => (window.location.href = "/api/chat")}
@@ -88,5 +82,20 @@
       font-size: 1.5rem;
       padding: 0.75rem 2rem;
     }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  .delay-200 {
+    animation-delay: 0.5s;
   }
 </style>
