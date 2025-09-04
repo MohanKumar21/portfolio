@@ -135,7 +135,7 @@
       class="input"
       bind:value={input}
       autocomplete="off"
-      placeholder="Ask about my CV…"
+      placeholder="Curious about my work? Type your question here…"
       disabled={loading}
     />
     <button type="submit" class="send-btn" disabled={loading || !input.trim()}>

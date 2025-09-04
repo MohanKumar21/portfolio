@@ -3,13 +3,11 @@
   import SuggestionQuestions from "$lib/components/SuggestionQuestions.svelte";
 
   const suggestions = [
-    "What projects have you worked on?",
-    "Tell me about your experience.",
-    "Show me highlights from your resume.",
-    "List your strongest skills.",
-    "What are your recent achievements?",
+    "Can you walk me through your career journey?",
+    "Show me your technical skills and expertise.",
+    "Highlight achievements you’re most proud of.",
+    "Show me a summary of your education background.",
   ];
-
   let chatPanelRef: typeof ChatPanel | null = null;
 
   function handleSuggestionPick(e: CustomEvent<{ suggestion: string }>) {

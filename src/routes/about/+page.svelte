@@ -2,24 +2,36 @@
 </script>
 
 <div class="about-section">
-  <h1 class="about-title">Mohan Kumar</h1>
+  <h1 class="about-title">K S Mohan Kumar</h1>
   <div class="about-role">Software Engineer</div>
   <div class="about-description">
-    Hi! I’m Mohan Kumar, a Software Engineer at Oracle with an
-    <strong>Interdisciplinary Dual Degree from IIT Madras</strong>
-    (B.Tech in Mechanical Engineering · M.Tech in Data Science). My expertise spans
-    across <strong>AI/ML systems</strong>,
-    <strong>Generative AI</strong>, and
-    <strong>infrastructure engineering</strong>. I’ve worked on building and
-    automating <strong>dedicated AI clusters</strong>, deploying
-    <strong>Generative AI endpoints and models</strong>, and creating scalable
-    <strong>control and data plane solutions</strong>
-    in both Python and Java SDKs. Beyond AI infrastructure, I enjoy working on
-    <strong>full-stack development</strong>, integrating modern front-end
-    frameworks with reliable backend systems, and designing
-    <strong>performance-driven architectures</strong>. I’m passionate about
-    continuous learning, thoughtful design, and leveraging technology to create
-    meaningful impact.
+    <p>
+      I’m a Software Engineer passionate about <strong>AI systems</strong> and
+      their real-world applications. I’ve worked
+      <strong>production-grade SaaS</strong>
+      and have a strong grasp of
+      <strong>infrastructure</strong>, <strong>scalability</strong> and
+      <strong>Monitoring</strong>.
+    </p>
+
+    <p>
+      I’m also an RL enthusiast with experience in <strong
+        >Multi-Agent RL</strong
+      >,
+      <strong>Inverse RL</strong>, and <strong>Bandit</strong> problems. My time
+      at
+      <strong>IIT Madras</strong> gave me a solid foundation in
+      <strong>Machine Learning</strong>, <strong>Mathematics</strong>, and
+      <strong>Computer Vision</strong>.
+    </p>
+
+    <p>
+      Currently, as part of the <strong>Generative AI Services</strong> team, I
+      work on
+      <strong>end-to-end GenAI workflow deployments</strong>. I’m driven by
+      <strong>continuous learning</strong>, <strong>thoughtful design</strong>,
+      and leveraging technology to create <strong>meaningful impact</strong>.
+    </p>
   </div>
 </div>
 
