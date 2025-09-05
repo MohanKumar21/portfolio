@@ -11,6 +11,7 @@
       height: 250px;
       border-radius: 50%;
       object-fit: cover;
+      object-position: center 30%;
       display: block;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     "
