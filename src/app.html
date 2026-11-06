@@ -4,24 +4,15 @@
 		<meta charset="utf-8" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.svg" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..700,0..100,0..1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+			rel="stylesheet"
+		/>
 		%sveltekit.head%
-		<script
-            src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"
-            integrity="sha512-Kef5sc7gfTacR7TZKelcrRs15ipf7+t+n7Zh6mKNJbmW+/RRdCW9nwfLn4YX0s2nO6Kv5Y2ChqgIakaC6PW09A=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-        ></script>
 	</head>
-	<body data-sveltekit-preload-data="hover" style= "background-color: black;">
+	<body data-sveltekit-preload-data="hover" style="background-color: #07090f;">
 		<div>%sveltekit.body%</div>
-		<div class="absolute top-0 left-0 z-[-1] min-h-screen w-full opacity-70">
-            <div id="particles-js" class="absolute inset-0" />
-        </div>
-		<script>
-		particlesJS.load("particles-js", "particles.json", function () {
-			console.log("callback - particles.js config loaded");
-		});
-	</script>
 	</body>
-	
 </html>

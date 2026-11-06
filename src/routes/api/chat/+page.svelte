@@ -1,6 +1,8 @@
 <script lang="ts">
   import ChatPanel from "$lib/components/ChatPanel.svelte";
   import SuggestionQuestions from "$lib/components/SuggestionQuestions.svelte";
+  import { page } from "$app/state";
+  import { onMount } from "svelte";
 
   const suggestions = [
     "Can you walk me through your career journey?",
@@ -8,11 +10,17 @@
     "Highlight achievements you’re most proud of.",
     "Show me a summary of your education background.",
   ];
-  let chatPanelRef: typeof ChatPanel | null = null;
+  let chatPanelRef: ReturnType<typeof ChatPanel> | null = null;
 
   function handleSuggestionPick(e: CustomEvent<{ suggestion: string }>) {
     chatPanelRef?.sendSuggestion(e.detail.suggestion);
   }
+
+  // A question typed into the home page ask box arrives as ?q=
+  onMount(() => {
+    const q = page.url.searchParams.get("q");
+    if (q) chatPanelRef?.sendSuggestion(q);
+  });
 </script>
 
 <div class="api-chat-page">
